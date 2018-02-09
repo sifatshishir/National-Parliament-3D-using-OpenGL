@@ -1997,9 +1997,46 @@ float i1=.5,i2=.5,i3=.5;
 float view_x=0,view_z=-5;
 
 
+float computeScale(const char* strs[4])
+{
+    float maxWidth = 0;
+    for(int i = 0; i < 4; i++)
+    {
+        float width = t3dDrawWidth(strs[i]);
+        if (width > maxWidth)
+        {
+            maxWidth = width;
+        }
+    }
+
+    return 2.6f / maxWidth;
+}
+
+float _scale;
+const char* STRS[4] = {"National", "Parliament","of", "Bangladesh"};
+
+void cleanup()
+{
+    t3dCleanup();
+}
+int text_timer=0;
+
+void draw_text()
+{
+    glScalef(_scale,_scale,_scale);
+    glTranslatef(-4,5,2);
+    t3dDraw3D("National",-3,1,1.5f);
+    glTranslatef(0,-1,0);
+    t3dDraw3D("Parliament",-3,1,1.5f);
+    glTranslatef(0,-1,0);
+    t3dDraw3D("of",-3,1,1.5f);
+    glTranslatef(0,-1,0);
+    t3dDraw3D("Bangladesh",-3,1,1.5f);
+
+}
+
 void drawscene()
 {
-
     GLUquadric *quadric;
     quadric = gluNewQuadric();
 
@@ -2009,6 +2046,11 @@ void drawscene()
     glLoadIdentity();
 
     glTranslatef(.5,0,-10);
+
+    glPushMatrix();
+    if(text_timer==1)
+        draw_text();
+    glPopMatrix();
 
     GLfloat ambientColor[] = {i1,i2,i3,1};
     glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambientColor);
@@ -2100,6 +2142,10 @@ void my_keyboard(unsigned char key, int x, int y)
 {
     switch (key)
     {
+    case 't':
+        if(text_timer==0)text_timer=1;
+        else text_timer=0;
+        break;
     case '1':
         if(light_on == 1)
             light_on = 0;
@@ -2264,7 +2310,7 @@ int main(int argc, char *argv[])
     glutCreateWindow("National Parliament Of Bangladesh");
 
     initrendering();
-
+    _scale = computeScale(STRS);
     glutDisplayFunc(drawscene);
     glutKeyboardFunc(my_keyboard);
     glutMouseFunc(my_mouse);
