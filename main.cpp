@@ -22,6 +22,7 @@ float Rangle = 0.0f;
 int night = 0;
 int sun_moon_flag = 0;
 int light_on = 0;
+int fogflag=0;
 
 GLuint loadTexture(Image* image)
 {
@@ -2018,6 +2019,23 @@ void drawscene()
     glLightfv(GL_LIGHT0, GL_DIFFUSE, lightColor0);
     glLightfv(GL_LIGHT0, GL_POSITION, lightPos0);
 
+    if(fogflag==1)
+    {
+        GLfloat fogcolour[4]= {1.0,1.0,1.0,1.0};
+
+        glFogfv(GL_FOG_COLOR,fogcolour);              /* Define the fog colour */
+        glFogf(GL_FOG_DENSITY,0.08);                   /* How dense */
+        glFogi(GL_FOG_MODE,GL_EXP);                   /* exponential decay */
+        glFogf(GL_FOG_START,3.0);                   /* Where wwe start fogging */
+        glFogf(GL_FOG_END,100.0);                       /* end */
+        glHint(GL_FOG_HINT, GL_FASTEST);              /* compute per vertex */
+        glEnable(GL_FOG);/* ENABLE */
+    }
+    if(fogflag==0)
+    {
+        glDisable(GL_FOG);
+    }
+
     glRotatef (tipangle, 1,0,0);
     //glRotatef (viewangle, 0,1,0);
     glTranslatef(view_x,0,view_z);
@@ -2168,10 +2186,10 @@ void my_mouse(int button, int state, int x, int y)
     switch (button)
     {
     case GLUT_RIGHT_BUTTON:
-
+        fogflag=1;
         break;
     case GLUT_LEFT_BUTTON:
-
+        fogflag=0;
         break;
     }
 }
